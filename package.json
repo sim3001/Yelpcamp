@@ -1,0 +1,15 @@
+{
+  "name": "yelpcamp",
+  "version": "1.0.0",
+  "description": "Yelp clone built using web technologies",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Simranjit Singh",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.9",
+    "express": "^4.16.3"
+  }
+}
