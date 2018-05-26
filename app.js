@@ -17,6 +17,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine','ejs');
 
+app.use(express.static(__dirname + "/public"));
+
 var db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'connection error:'));
