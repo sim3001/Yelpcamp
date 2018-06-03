@@ -144,6 +144,15 @@ app.post('/register', (req,res)=>{
         })
     });
 });
+
+app.get('/login',(req,res)=>{
+    res.render('login');
+});
+
+app.post('/login', passport.authenticate("local", {successRedirect: "/campgrounds", failureRedirect:"/login"}) ,(req,res)=>{
+    
+})
+
 app.listen(port, ()=>{
     console.log(`YelpCamp App running on Port ${port}`);
 });
