@@ -29,6 +29,18 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log("Database Connected");
 });
+//Passport Config
+app.use(require('express-session')({
+    secret:"Once again Rusty wins cutest dog!",
+    resave:false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 app.get('/', (req,res)=>{
     res.render('landing');
@@ -115,6 +127,23 @@ app.post("/campgrounds/:id/comments", (req, res) => {
     
 });
 
+//Auth routes
+app.get('/register', (req,res)=>{
+    res.render('register');
+})
+//Handle sign up logic
+app.post('/register', (req,res)=>{
+    const newUser =  new User({username: req.body.username});
+    User.register(newUser, req.body.password, (err, user)=>{
+        if(err){
+            console.log(err);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req,res, ()=>{
+            res.redirect('/campgrounds');
+        })
+    });
+});
 app.listen(port, ()=>{
     console.log(`YelpCamp App running on Port ${port}`);
 });
