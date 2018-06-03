@@ -2,8 +2,11 @@ const express = require('express'),
       port = process.env.PORT || 3000,
       bodyParser = require("body-parser"),
       mongoose = require("mongoose"),
+      passport = require("passport"),
+      localStrategy = require("passport-local"),
       Campground = require("./models/campground"),
-      Comment = require("./models/comment")
+      User = require("./models/user"),
+      Comment = require("./models/comment"),
       seedDB = require("./seeds");
 
 
