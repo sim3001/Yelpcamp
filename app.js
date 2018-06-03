@@ -91,7 +91,7 @@ app.get("/campgrounds/:id", (req,res)=>{
     });
 });
 //Create new comment for campground
-app.get("/campgrounds/:id/comments/new", (req,res)=>{
+app.get("/campgrounds/:id/comments/new", isLoggedIn,(req,res)=>{
     Campground.findById(req.params.id , (err, campground) => {
         if(err) {
             console.log(err);
@@ -102,7 +102,7 @@ app.get("/campgrounds/:id/comments/new", (req,res)=>{
     
 }); 
 
-app.post("/campgrounds/:id/comments", (req, res) => {
+app.post("/campgrounds/:id/comments", isLoggedIn,(req, res) => {
     //lookup campground using ID
     Campground.findById(req.params.id, (err, campground) => {
         if(err) {
@@ -149,9 +149,25 @@ app.get('/login',(req,res)=>{
     res.render('login');
 });
 
-app.post('/login', passport.authenticate("local", {successRedirect: "/campgrounds", failureRedirect:"/login"}) ,(req,res)=>{
-    
-})
+app.post('/login', passport.authenticate("local", {
+    successRedirect: "/campgrounds", 
+    failureRedirect:"/login"
+}) ,(req,res)=>{
+});
+
+app.get('/logout', (req,res)=>{
+    req.logout();
+    res.redirect('/campgrounds');
+});
+
+//Middleware to check if user is logged in
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
+    } else{
+        res.redirect('/login');
+    }
+}
 
 app.listen(port, ()=>{
     console.log(`YelpCamp App running on Port ${port}`);
