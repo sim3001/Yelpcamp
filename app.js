@@ -41,6 +41,10 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req,res,next){
+    res.locals.currentUser = req.user;
+    next();
+});
 
 app.get('/', (req,res)=>{
     res.render('landing');
@@ -52,7 +56,7 @@ app.get('/campgrounds', (req,res)=>{
         if(err){
             console.log(err);
         } else {
-            res.render("campgrounds/index",{campgrounds : allCampgrounds});
+            res.render("campgrounds/index",{campgrounds : allCampgrounds, currentUser: req.user});
         }
     })
 });
@@ -73,7 +77,7 @@ app.post("/campgrounds", (req,res)=>{
             res.redirect("/campgrounds");
         }
     })
-}); 
+});
 
 app.get("/campgrounds/new", (req,res)=>{
     res.render('campgrounds/new');
@@ -81,9 +85,9 @@ app.get("/campgrounds/new", (req,res)=>{
 
 app.get("/campgrounds/:id", (req,res)=>{
     //Find campground with provided ID
-    Campground.findById(req.params.id).populate("comments").exec((err, foundCampground)=>{
+    Campground.findById(req.params.id).populate("comments").exec((err, foundCampground)=> {
         if(err){
-            console.log(err);    
+            console.log(err);
         } else {
             //Render show template with that campground
             res.render("campgrounds/show", {campground: foundCampground});
@@ -99,12 +103,12 @@ app.get("/campgrounds/:id/comments/new", isLoggedIn,(req,res)=>{
             res.render('comments/new', {campground:campground});
         }
     });
-    
-}); 
+
+});
 
 app.post("/campgrounds/:id/comments", isLoggedIn,(req, res) => {
     //lookup campground using ID
-    Campground.findById(req.params.id, (err, campground) => {
+    Campground.findById(req.params.id, (err, campground)=> {
         if(err) {
             console.log(err);
             res.redirect("/campgrounds");
@@ -113,7 +117,7 @@ app.post("/campgrounds/:id/comments", isLoggedIn,(req, res) => {
                     //create new comments
                     //connect new comments to campground
                     //redirect to campground show page
-                if(err){ 
+                if(err){
                     console.log(err);
                 } else {
                     campground.comments.push(comment);
@@ -124,13 +128,13 @@ app.post("/campgrounds/:id/comments", isLoggedIn,(req, res) => {
 
         }
     });
-    
+
 });
 
 //Auth routes
 app.get('/register', (req,res)=>{
     res.render('register');
-})
+});
 //Handle sign up logic
 app.post('/register', (req,res)=>{
     const newUser =  new User({username: req.body.username});
@@ -150,7 +154,7 @@ app.get('/login',(req,res)=>{
 });
 
 app.post('/login', passport.authenticate("local", {
-    successRedirect: "/campgrounds", 
+    successRedirect: "/campgrounds",
     failureRedirect:"/login"
 }) ,(req,res)=>{
 });
