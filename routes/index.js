@@ -3,12 +3,12 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
 
+
+//Root Route
 router.get('/', (req,res)=>{
     res.render('landing');
 });
 
-
-//Auth routes
 router.get('/register', (req,res)=>{
     res.render('register');
 });

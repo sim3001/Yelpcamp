@@ -4,11 +4,10 @@ const express = require('express'),
       mongoose = require("mongoose"),
       passport = require("passport"),
       localStrategy = require("passport-local"),
-      Campground = require("./models/campground"),
       User = require("./models/user"),
-      Comment = require("./models/comment"),
       seedDB = require("./seeds");
 
+// Requiring routes
 const commentRoutes = require('./routes/comments');
 const campgroundsRoutes = require('./routes/campgrounds');
 const indexRoutes = require('./routes/index');
@@ -44,14 +43,16 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//Local to pass current user into header
 app.use(function(req,res,next){
     res.locals.currentUser = req.user;
     next();
 });
 
-app.use(commentRoutes);
-app.use(indexRoutes);
-app.use(campgroundsRoutes);
+// Router
+app.use('/',indexRoutes);
+app.use("/campgrounds/:id/comments", commentRoutes);
+app.use("/campgrounds", campgroundsRoutes);
 
 
 
