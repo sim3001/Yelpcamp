@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Campground = require("../models/campground");
 
-router.get("/",(req, res) => {
+router.get("/", (req, res) => {
   //Get all campgrounds from database
   Campground.find({}, (err, allCampgrounds) => {
     if (err) {
@@ -16,7 +16,7 @@ router.get("/",(req, res) => {
   });
 });
 //CREATE ROUTE /CAMPGROUNDS/
-router.post("/",  isLoggedIn,(req, res) => {
+router.post("/", isLoggedIn, (req, res) => {
   //get data from form, add to campgrounds array
   let name = req.body.name;
   let image = req.body.image;
@@ -24,8 +24,13 @@ router.post("/",  isLoggedIn,(req, res) => {
   let author = {
     id: req.user._id,
     username: req.user.username
-  }
-  const newCampground = { name: name, image: image, description: description, author: author};
+  };
+  const newCampground = {
+    name: name,
+    image: image,
+    description: description,
+    author: author
+  };
 
   //Create a new campground and save to database
   Campground.create(newCampground, (err, newlyCreated) => {
@@ -38,7 +43,7 @@ router.post("/",  isLoggedIn,(req, res) => {
   });
 });
 
-router.get("/new",  isLoggedIn,(req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
@@ -54,6 +59,32 @@ router.get("/:id", (req, res) => {
         res.render("campgrounds/show", { campground: foundCampground });
       }
     });
+});
+//Edit Campground Route
+router.get("/:id/edit", (req, res) => {
+  Campground.findById(req.params.id, (err, foundCampground) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("campgrounds/edit", { campground: foundCampground });
+    }
+  });
+});
+
+//Update Campground Route
+router.put("/:id", (req, res) => {
+  Campground.findByIdAndUpdate(
+    req.params.id,
+    req.body.campground,
+    (err, updatedCampground) => {
+      if (err) {
+        console.log(err);
+        res.redirect("/campgrounds");
+      } else {
+        res.redirect(`/campgrounds/${req.params.id}`);
+      }
+    }
+  );
 });
 
 //Middleware
