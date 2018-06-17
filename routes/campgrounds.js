@@ -68,7 +68,7 @@ router.get("/:id/edit", checkOwnership, (req, res) => {
 });
 
 //Update Campground Route
-router.put("/:id", (req, res) => {
+router.put("/:id", checkOwnership, (req, res) => {
   Campground.findByIdAndUpdate(
     req.params.id,
     req.body.campground,
@@ -84,7 +84,7 @@ router.put("/:id", (req, res) => {
 });
 
 //Campground Destroy Route
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkOwnership, (req, res) => {
   Campground.findOneAndRemove(req.params.id, err => {
     if (err) {
       res.redirect("/campgrounds");
@@ -123,5 +123,4 @@ function checkOwnership(req, res, next) {
     res.redirect("back");
   }
 }
-
 module.exports = router;
