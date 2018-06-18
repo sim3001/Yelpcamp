@@ -43,13 +43,15 @@ router.post("/", isLoggedIn, (req, res) => {
 });
 
 //Comments Edit Route
-
-router.get("/:comment_id/edit", (req,res)=>{
-  Comment.findById(req.params.comment_id, (err, foundComment)=> {
-    if(err){
+router.get("/:comment_id/edit", (req, res) => {
+  Comment.findById(req.params.comment_id, (err, foundComment) => {
+    if (err) {
       console.log(err);
     } else {
-      res.render('comments/edit', { comment: foundComment, campgroundId: req.params.id });
+      res.render("comments/edit", {
+        comment: foundComment,
+        campgroundId: req.params.id
+      });
     }
   });
 });
@@ -62,12 +64,22 @@ router.put("/:comment_id", (req, res) => {
     (err, updatedComment) => {
       if (err) {
         console.log(err);
-        res.redirect("/campgrounds");
+        res.redirect("back");
       } else {
         res.redirect(`/campgrounds/${req.params.id}`);
       }
     }
   );
+});
+//Comment Destroy Route
+router.delete("/:comment_id", (req, res) => {
+  Comment.findOneAndRemove(req.params.comment_id, err => {
+    if (err) {
+      res.redirect(`/campgrounds/${req.params.id}`);
+    } else {
+      res.redirect(`/campgrounds/${req.params.id}`);
+    }
+  });
 });
 
 //Middleware
