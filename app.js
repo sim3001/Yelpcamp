@@ -5,6 +5,7 @@ const express = require("express"),
   passport = require("passport"),
   localStrategy = require("passport-local"),
   methodOverride = require('method-override'),
+  flash = require('connect-flash'),
   User = require("./models/user"),
   seedDB = require("./seeds");
 
@@ -42,6 +43,9 @@ app.use(
     saveUninitialized: false
   })
 );
+
+app.use(flash());
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new localStrategy(User.authenticate()));
@@ -51,6 +55,7 @@ passport.deserializeUser(User.deserializeUser());
 //Local to pass current user into header
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
+  res.locals.message = req.flash("error");
   next();
 });
 
