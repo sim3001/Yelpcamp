@@ -45,13 +45,6 @@ app.use(
 );
 
 app.use(flash());
-
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new localStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
 //Local to pass current user into header
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
@@ -59,6 +52,14 @@ app.use(function(req, res, next) {
   res.locals.success = req.flash("success");
   next();
 });
+app.locals.moment = require('moment');
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 
 // Router
 app.use("/", indexRoutes);
