@@ -19,18 +19,11 @@ router.get("/", (req, res) => {
 //CREATE ROUTE /CAMPGROUNDS/
 router.post("/", middleware.isLoggedIn, (req, res) => {
   //get data from form, add to campgrounds array
-  let name = req.body.name;
-  let image = req.body.image;
-  let description = req.body.description;
-  let author = {
+  const newCampground = req.body.campground;
+
+  newCampground.author = {
     id: req.user._id,
     username: req.user.username
-  };
-  const newCampground = {
-    name: name,
-    image: image,
-    description: description,
-    author: author
   };
 
   //Create a new campground and save to database
@@ -38,6 +31,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     if (err) {
       req.flash("error", err.message);
     } else {
+      console.log(newCampground);
       //redirect to campgrounds get page
       res.redirect("/campgrounds");
     }
