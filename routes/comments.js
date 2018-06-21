@@ -8,7 +8,7 @@ const middleware = require('../middleware');
 router.get("/new", middleware.isLoggedIn, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
     } else {
       res.render("comments/new", { campground: campground });
     }
@@ -19,7 +19,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   //lookup campground using ID
   Campground.findById(req.params.id, (err, campground) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
       res.redirect("/campgrounds");
     } else {
       Comment.create(req.body.comment, (err, comment) => {
@@ -27,6 +27,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
         //connect new comments to campground
         //redirect to campground show page
         if (err) {
+          req.flash("error", "Something went wrong...");
           console.log(err);
         } else {
           //add username and id to comments
@@ -36,6 +37,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
           comment.save();
           campground.comments.push(comment);
           campground.save();
+          req.flash("success", "Successfully added comment");
           res.redirect(`/campgrounds/${campground._id}`);
         }
       });
@@ -47,7 +49,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 router.get("/:comment_id/edit", middleware.checkCommentOwnership, (req, res) => {
   Comment.findById(req.params.comment_id, (err, foundComment) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
     } else {
       res.render("comments/edit", {
         comment: foundComment,
@@ -64,7 +66,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership,(req, res) => {
     req.body.comment,
     (err, updatedComment) => {
       if (err) {
-        console.log(err);
+        req.flash("error", err.message);
         res.redirect("back");
       } else {
         res.redirect(`/campgrounds/${req.params.id}`);
@@ -76,8 +78,10 @@ router.put("/:comment_id", middleware.checkCommentOwnership,(req, res) => {
 router.delete("/:comment_id", middleware.checkCommentOwnership,(req, res) => {
   Comment.findOneAndRemove(req.params.comment_id, err => {
     if (err) {
+      req.flash("error", "Something went wrong");
       res.redirect("back");
     } else {
+      req.flash("success", "Successfully deleted comment");
       res.redirect(`/campgrounds/${req.params.id}`);
     }
   });

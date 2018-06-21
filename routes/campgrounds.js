@@ -7,7 +7,7 @@ router.get("/", (req, res) => {
   //Get all campgrounds from database
   Campground.find({}, (err, allCampgrounds) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
     } else {
       res.render("campgrounds/index", {
         campgrounds: allCampgrounds,
@@ -36,7 +36,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   //Create a new campground and save to database
   Campground.create(newCampground, (err, newlyCreated) => {
     if (err) {
-      console.log(err);
+      req.flash("error", err.message);
     } else {
       //redirect to campgrounds get page
       res.redirect("/campgrounds");
@@ -54,7 +54,7 @@ router.get("/:id", (req, res) => {
     .populate("comments")
     .exec((err, foundCampground) => {
       if (err) {
-        console.log(err);
+        req.flash("error", err.message);
       } else {
         //Render show template with that campground
         res.render("campgrounds/show", { campground: foundCampground });
@@ -75,7 +75,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
     req.body.campground,
     (err, updatedCampground) => {
       if (err) {
-        console.log(err);
+        req.flash("error", err.message);
         res.redirect("/campgrounds");
       } else {
         res.redirect(`/campgrounds/${req.params.id}`);
@@ -88,6 +88,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
 router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
   Campground.findOneAndRemove(req.params.id, err => {
     if (err) {
+      req.flash("error", err.message);
       res.redirect("/campgrounds");
     } else {
       res.redirect("/campgrounds");
