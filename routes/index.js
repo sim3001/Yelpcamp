@@ -13,11 +13,12 @@ router.get("/register", function(req, res){
   res.render("register", {page: 'register'});
 });
 
-
-
 //Handle sign up logic
 router.post("/register", (req, res) => {
   const newUser = new User({ username: req.body.username });
+  if(req.body.adminCode === "adminpassword") {
+    newUser.isAdmin = true;
+  }
   User.register(newUser, req.body.password, (err, user) => {
     if (err) {
       req.flash("error", err.message);
@@ -39,7 +40,8 @@ router.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/campgrounds",
-    failureRedirect: "/login"
+    failureRedirect: "/login",
+    failureFlash: true
   }),
   (req, res) => {}
 );

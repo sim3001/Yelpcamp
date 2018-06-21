@@ -45,13 +45,7 @@ app.use(
 );
 
 app.use(flash());
-//Local to pass current user into header
-app.use(function(req, res, next) {
-  res.locals.currentUser = req.user;
-  res.locals.error = req.flash("error");
-  res.locals.success = req.flash("success");
-  next();
-});
+
 app.locals.moment = require('moment');
 
 app.use(passport.initialize());
@@ -60,7 +54,13 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
+//Local to pass current user into header
+app.use(function(req, res, next) {
+  res.locals.currentUser = req.user;
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
+  next();
+});
 // Router
 app.use("/", indexRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
