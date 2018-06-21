@@ -8,9 +8,12 @@ router.get("/", (req, res) => {
   res.render("landing");
 });
 
-router.get("/register", (req, res) => {
-  res.render("register");
+// show register form
+router.get("/register", function(req, res){
+  res.render("register", {page: 'register'});
 });
+
+
 
 //Handle sign up logic
 router.post("/register", (req, res) => {
@@ -27,8 +30,9 @@ router.post("/register", (req, res) => {
   });
 });
 
-router.get("/login", (req, res) => {
-  res.render("login");
+//show login form
+router.get("/login", function(req, res){
+  res.render("login", {page: 'login'});
 });
 
 router.post(
