@@ -35,6 +35,7 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", function() {
   console.log("Database Connected");
 });
+
 //Passport Config
 app.use(
   require("express-session")({
@@ -43,9 +44,10 @@ app.use(
     saveUninitialized: false
   })
 );
-
+//Setup Connect-flash
 app.use(flash());
 
+//Setup a local variable for momentJS to be used in templates
 app.locals.moment = require('moment');
 
 app.use(passport.initialize());
@@ -54,7 +56,7 @@ passport.use(new localStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//Local to pass current user into header
+//Local to pass current user into header and to pass flash variables into templates
 app.use(function(req, res, next) {
   res.locals.currentUser = req.user;
   res.locals.error = req.flash("error");
@@ -65,7 +67,7 @@ app.use(function(req, res, next) {
 app.use("/", indexRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
 app.use("/campgrounds", campgroundsRoutes);
-
+//Server
 app.listen(port, () => {
   console.log(`YelpCamp App running on Port ${port}`);
 });

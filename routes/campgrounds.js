@@ -36,6 +36,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   });
 });
 
+//Create route /campgrounds/new
 router.get("/new", middleware.isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
