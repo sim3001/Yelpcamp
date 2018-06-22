@@ -29,7 +29,6 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     if (err) {
       req.flash("error", err.message);
     } else {
-      console.log(newCampground);
       //redirect to campgrounds get page
       res.redirect("/campgrounds");
     }
